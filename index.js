@@ -341,7 +341,7 @@ app.get("/product-script.js", (req, res) => {
 
     async function insertProductSchema() {
       try {
-        const tokenResponse = await fetch(\`https://server-page-xo9v.onrender.com/check-store?shop=\${shop}\`);
+        const tokenResponse = await fetch(\`https://script-server-ybb5.onrender.com/check-store?shop=\${shop}\`);
         const tokenData = await tokenResponse.json();
 
         if (tokenData && tokenData.accessToken) {
