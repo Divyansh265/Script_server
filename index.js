@@ -222,7 +222,7 @@ app.get("/server-script.js", (req, res) => {
   
     async function insertProductSchema() {
       try {
-        const tokenResponse = await fetch(\`https://server-page-xo9v.onrender.com/check-store?shop=\${shop}\`);
+        const tokenResponse = await fetch(\`https://script-server-c42x.onrender.com/check-store?shop=\${shop}\`);
         const tokenData = await tokenResponse.json();
   
         if (tokenData && tokenData.accessToken) {
