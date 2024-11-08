@@ -10,45 +10,45 @@ const axios = require('axios');
 
 const DB = "mongodb+srv://spuspam111:Sp123456@cluster0.0taaaup.mongodb.net/scripttag?retryWrites=true&w=majority";
 mongoose.connect(DB)
-    .then(() => {
-        console.log("Connected to MongoDB");
-    })
-    .catch(error => {
-        console.error("Error connecting to MongoDB:", error);
-    });
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch(error => {
+    console.error("Error connecting to MongoDB:", error);
+  });
 
 
 const Shop = mongoose.model('Shop', new mongoose.Schema({
-    shop: { type: String, required: true, unique: true },
-    accessToken: { type: String, required: true },
-    isEnabled: { type: String, default: false },
-    collection_isEnabled: { type: String, default: "false" },
-    article_isEnabled: { type: String, default: "false" },
-    organization_isEnabled: { type: String, default: "false" },
-    breadcrumb_isEnabled: { type: String, default: "false" },
-    video_isEnabled: { type: String, default: "false" },
-    searchbox_isEnabled: { type: String, default: "false" },
-    recipe_isEnabled: { type: String, default: "false" },
+  shop: { type: String, required: true, unique: true },
+  accessToken: { type: String, required: true },
+  isEnabled: { type: String, default: false },
+  collection_isEnabled: { type: String, default: "false" },
+  article_isEnabled: { type: String, default: "false" },
+  organization_isEnabled: { type: String, default: "false" },
+  breadcrumb_isEnabled: { type: String, default: "false" },
+  video_isEnabled: { type: String, default: "false" },
+  searchbox_isEnabled: { type: String, default: "false" },
+  recipe_isEnabled: { type: String, default: "false" },
 }));
 
 
 app.get('/serve-script/:shop', async (req, res) => {
-    // Extract the shop parameter from the query string
-    const shopName = req.params.shop;
+  // Extract the shop parameter from the query string
+  const shopName = req.params.shop;
 
-    if (!shopName) {
-        return res.status(400).send('Shop name is required');
-    }
+  if (!shopName) {
+    return res.status(400).send('Shop name is required');
+  }
 
-    // Find shop details in MongoDB
-    const shopData = await Shop.findOne({ shop: shopName });
+  // Find shop details in MongoDB
+  const shopData = await Shop.findOne({ shop: shopName });
 
-    if (!shopData) {
-        return res.status(404).send('Shop not found');
-    }
+  if (!shopData) {
+    return res.status(404).send('Shop not found');
+  }
 
-    // Generate dynamic JavaScript
-    const scriptContent = `
+  // Generate dynamic JavaScript
+  const scriptContent = `
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParts = window.location.pathname.split("/");
       const handle = urlParts[urlParts.length - 1];
@@ -73,34 +73,34 @@ app.get('/serve-script/:shop', async (req, res) => {
     });
   `;
 
-    // Set Content-Type to JavaScript
-    res.setHeader('Content-Type', 'application/javascript');
-    res.send(scriptContent);
+  // Set Content-Type to JavaScript
+  res.setHeader('Content-Type', 'application/javascript');
+  res.send(scriptContent);
 });
 app.get("/check-store", async (req, res) => {
-    const { shop } = req.query;
+  const { shop } = req.query;
 
-    try {
-        const store = await Shop.findOne({ shop });
+  try {
+    const store = await Shop.findOne({ shop });
 
-        if (!store) {
-            return res.status(404).json({ message: "Store not registered." });
-        }
-
-        res.json({ accessToken: store.accessToken });
-    } catch (error) {
-        console.error("Error retrieving store data:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+    if (!store) {
+      return res.status(404).json({ message: "Store not registered." });
     }
+
+    res.json({ accessToken: store.accessToken });
+  } catch (error) {
+    console.error("Error retrieving store data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 
 
 
 app.get("/server-script.js", (req, res) => {
-    res.set("Content-Type", "application/javascript");
+  res.set("Content-Type", "application/javascript");
 
-    res.send(`
+  res.send(`
     const shop = window.location.hostname;
   
     async function insertProductSchema() {
@@ -170,6 +170,7 @@ app.get("/server-script.js", (req, res) => {
         "name": product.title,
         "shipping_fee": 100,
         "shipping_Address": "India",
+        "mydata_send":"Hello my data",
         "image": product.images.map(image => image.src),
         "description": product.body_html.replace(/<[^>]*>/g, ""),
         "sku": product.variants[0].sku,
@@ -204,7 +205,7 @@ app.get("/server-script.js", (req, res) => {
   `);
 });
 app.get('/static/product-title-script.js', (req, res) => {
-    res.send(`
+  res.send(`
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParts = window.location.pathname.split("/");
       if (urlParts[1] === "products") {
@@ -226,10 +227,10 @@ app.get('/static/product-title-script.js', (req, res) => {
 
 
 app.get('/remove-server-script', (req, res) => {
-    res.set("Content-Type", "application/javascript");
+  res.set("Content-Type", "application/javascript");
 
-    // JavaScript to remove the script tag
-    res.send(`
+  // JavaScript to remove the script tag
+  res.send(`
     async function removeServerScript() {
       const scriptUrl = "https://server-page-xo9v.onrender.com/server-script.js";
       
@@ -253,65 +254,65 @@ app.get('/remove-server-script', (req, res) => {
 
 app.get('/removetag/:shopname', async (req, res) => {
 
-    const shop = req.params.shopname;
+  const shop = req.params.shopname;
 
 
-    const scriptUrl = "https://server-page-xo9v.onrender.com/product-script.js";
+  const scriptUrl = "https://server-page-xo9v.onrender.com/product-script.js";
 
 
-    try {
-        // Fetch shop data
-        // const store = await Shop.findOne({ shop });
-        const shopData = await Shop.findOne({ shop });
-        console.log(shopData);
+  try {
+    // Fetch shop data
+    // const store = await Shop.findOne({ shop });
+    const shopData = await Shop.findOne({ shop });
+    console.log(shopData);
 
-        if (!shopData || !shopData.accessToken) {
-            return res.status(404).json({ message: `No access token found for store ${shop}` });
-        }
-
-        const accessToken = shopData.accessToken;
-
-        // Step 1: Check for existing script tags
-        const existingResponse = await axios.get(`https://${shop}/admin/api/2024-10/script_tags.json`, {
-            headers: {
-                "X-Shopify-Access-Token": accessToken,
-                "Content-Type": "application/json",
-            },
-        });
-
-        const existingData = existingResponse.data;
-
-        // Step 2: Normalize the script URL
-        const normalizedScriptUrl = new URL(scriptUrl).href;
-
-        // Step 3: Find the script tag ID to remove
-        const scriptTag = existingData.script_tags.find(tag => new URL(tag.src).href === normalizedScriptUrl);
-
-        if (scriptTag) {
-            // Step 4: Remove the script tag
-            await axios.delete(`https://${shop}/admin/api/2024-10/script_tags/${scriptTag.id}.json`, {
-                headers: {
-                    "X-Shopify-Access-Token": accessToken,
-                    "Content-Type": "application/json",
-                },
-            });
-
-            console.log(`Script tag removed for store ${shop}`);
-            return res.status(200).json({ message: `Script tag removed for store ${shop}` });
-        } else {
-            console.log(`No matching script tag found for store ${shop}`);
-            return res.status(404).json({ message: `No matching script tag found for store ${shop}` });
-        }
-    } catch (error) {
-        console.error(`Error removing script tag for store ${shop}:`, error.message);
-        return res.status(500).json({ message: `Error removing script tag for store ${shop}`, error: error.message });
+    if (!shopData || !shopData.accessToken) {
+      return res.status(404).json({ message: `No access token found for store ${shop}` });
     }
+
+    const accessToken = shopData.accessToken;
+
+    // Step 1: Check for existing script tags
+    const existingResponse = await axios.get(`https://${shop}/admin/api/2024-10/script_tags.json`, {
+      headers: {
+        "X-Shopify-Access-Token": accessToken,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const existingData = existingResponse.data;
+
+    // Step 2: Normalize the script URL
+    const normalizedScriptUrl = new URL(scriptUrl).href;
+
+    // Step 3: Find the script tag ID to remove
+    const scriptTag = existingData.script_tags.find(tag => new URL(tag.src).href === normalizedScriptUrl);
+
+    if (scriptTag) {
+      // Step 4: Remove the script tag
+      await axios.delete(`https://${shop}/admin/api/2024-10/script_tags/${scriptTag.id}.json`, {
+        headers: {
+          "X-Shopify-Access-Token": accessToken,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(`Script tag removed for store ${shop}`);
+      return res.status(200).json({ message: `Script tag removed for store ${shop}` });
+    } else {
+      console.log(`No matching script tag found for store ${shop}`);
+      return res.status(404).json({ message: `No matching script tag found for store ${shop}` });
+    }
+  } catch (error) {
+    console.error(`Error removing script tag for store ${shop}:`, error.message);
+    return res.status(500).json({ message: `Error removing script tag for store ${shop}`, error: error.message });
+  }
 });
 
 
 app.get("/product-script.js", (req, res) => {
-    res.set("Content-Type", "application/javascript");
-    res.send(`
+  res.set("Content-Type", "application/javascript");
+  res.send(`
     const shop = window.location.hostname;
 
     async function insertProductSchema() {
@@ -405,8 +406,8 @@ app.get("/product-script.js", (req, res) => {
 });
 
 app.get("/newproduct-script.js", (req, res) => {
-    res.set("Content-Type", "application/javascript");
-    res.send(`
+  res.set("Content-Type", "application/javascript");
+  res.send(`
  alert('Hii, this is product script');
   `);
 });
@@ -416,100 +417,100 @@ app.get("/newproduct-script.js", (req, res) => {
 
 // Endpoint to check the schema state
 app.get("/check-schema-state/:shopname", async (req, res) => {
-    try {
-        const shopName = req.params.shopname;
-        const shop = await Shop.findOne({ shop: shopName });
+  try {
+    const shopName = req.params.shopname;
+    const shop = await Shop.findOne({ shop: shopName });
 
-        if (shop) {
-            return res.status(200).json({ isEnabled: shop.isEnabled });
-        } else {
-            // If shop does not exist, create it with default state
-            const newShop = new Shop({ shop: shopName });
-            await newShop.save();
-            return res.status(200).json({ isEnabled: newShop.isEnabled });
-        }
-    } catch (error) {
-        console.error("Error fetching schema state:", error);
-        res.status(500).json({ message: "Error fetching schema state" });
+    if (shop) {
+      return res.status(200).json({ isEnabled: shop.isEnabled });
+    } else {
+      // If shop does not exist, create it with default state
+      const newShop = new Shop({ shop: shopName });
+      await newShop.save();
+      return res.status(200).json({ isEnabled: newShop.isEnabled });
     }
+  } catch (error) {
+    console.error("Error fetching schema state:", error);
+    res.status(500).json({ message: "Error fetching schema state" });
+  }
 });
 
 
 app.post("/update-state/:shopname/:isEnable", async (req, res) => {
-    try {
-        const shopName = req.params.shopname;
-        const value = req.params.isEnable;
+  try {
+    const shopName = req.params.shopname;
+    const value = req.params.isEnable;
 
-        const updatedShop = await Shop.findOneAndUpdate(
-            { shop: shopName }, // Find document by shopName
-            { $set: { isEnabled: value } }, // Use $set to update only specific fields
-            { new: true, upsert: false } // Return the updated document
-        );
-        res.status(200).send({ success: true, data: updatedShop })
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching schema state" });
+    const updatedShop = await Shop.findOneAndUpdate(
+      { shop: shopName }, // Find document by shopName
+      { $set: { isEnabled: value } }, // Use $set to update only specific fields
+      { new: true, upsert: false } // Return the updated document
+    );
+    res.status(200).send({ success: true, data: updatedShop })
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching schema state" });
 
-    }
+  }
 })
 
 
 
 // Endpoint to check the schema state
 app.get("/check-state/:shopname", async (req, res) => {
-    try {
-        const shopName = req.params.shopname;
-        const shop = await Shop.findOne({ shop: shopName });
+  try {
+    const shopName = req.params.shopname;
+    const shop = await Shop.findOne({ shop: shopName });
 
-        if (shop) {
+    if (shop) {
 
-            return res.status(200).json({ shop });
+      return res.status(200).json({ shop });
 
-        } else {
-            // If shop does not exist, you can return an error or create the shop with default values
-            const newShop = new Shop({ shop: shopName });
-            await newShop.save();
-            return res.status(404).json({ message: "Shop not found, created new shop with default values." });
-        }
-    } catch (error) {
-        console.error("Error fetching schema state:", error);
-        res.status(500).json({ message: "Error fetching schema state" });
+    } else {
+      // If shop does not exist, you can return an error or create the shop with default values
+      const newShop = new Shop({ shop: shopName });
+      await newShop.save();
+      return res.status(404).json({ message: "Shop not found, created new shop with default values." });
     }
+  } catch (error) {
+    console.error("Error fetching schema state:", error);
+    res.status(500).json({ message: "Error fetching schema state" });
+  }
 });
 
 
 
 // Endpoint to update the schema state
 app.post("/update-state/:shopname/:schema/:value", async (req, res) => {
-    try {
-        const shopName = req.params.shopname;
-        const schemaKey = req.params.schema; // Get the schema key from params
-        const value = req.params.value; // Get the value to be updated from params
+  try {
+    const shopName = req.params.shopname;
+    const schemaKey = req.params.schema; // Get the schema key from params
+    const value = req.params.value; // Get the value to be updated from params
 
-        // Build the dynamic update object
-        const update = { $set: { [schemaKey]: value } }; // Use [schemaKey] to dynamically update the specific field
+    // Build the dynamic update object
+    const update = { $set: { [schemaKey]: value } }; // Use [schemaKey] to dynamically update the specific field
 
-        // Find the shop and update the schema field
-        const updatedShop = await Shop.findOneAndUpdate(
-            { shop: shopName }, // Find document by shopName
-            update,             // Dynamic field update
-            { new: true, upsert: false } // Return the updated document, don't create if not found
-        );
+    // Find the shop and update the schema field
+    const updatedShop = await Shop.findOneAndUpdate(
+      { shop: shopName }, // Find document by shopName
+      update,             // Dynamic field update
+      { new: true, upsert: false } // Return the updated document, don't create if not found
+    );
 
-        if (updatedShop) {
-            return res.status(200).json({ success: true, data: updatedShop });
-        } else {
-            return res.status(404).json({ message: "Shop not found" });
-        }
-    } catch (error) {
-        console.error("Error updating schema state:", error);
-        res.status(500).json({ message: "Error updating schema state" });
+    if (updatedShop) {
+      return res.status(200).json({ success: true, data: updatedShop });
+    } else {
+      return res.status(404).json({ message: "Shop not found" });
     }
+  } catch (error) {
+    console.error("Error updating schema state:", error);
+    res.status(500).json({ message: "Error updating schema state" });
+  }
 });
 
 
 app.get("/newschema-script.js", (req, res) => {
-    res.set("Content-Type", "application/javascript");
-    res.send(`
+  res.set("Content-Type", "application/javascript");
+  res.send(`
     const shop = window.location.hostname;
 
     async function insertSchemaBasedOnPage() {
@@ -776,161 +777,39 @@ app.get("/newschema-script.js", (req, res) => {
 });
 
 
-app.get("/api/audit/:shop", async (req, res) => {
-    const shopName = req.params.shop;
-
-    // Fetch the shop and access token from the database
-    const shop = await Shop.findOne({ shop: shopName });
-    if (!shop) {
-        return res.status(404).send("Shop not found");
-    }
-    const access_token = shop.accessToken;
-
-    // Define the pages to be audited
-    const arrayOfPages = ["products", "custom_collections", "blogs", "pages"];
-
-    try {
-        // Map through the array of page types and fetch data for each
-        const promises = arrayOfPages.map((url) => getData(shopName, access_token, url));
-        const result = await Promise.all(promises);
-
-        // Structure the result into a labeled object
-        const structuredResult = {
-            products: result[0],           // Data for 'products'
-            collections: result[1],        // Data for 'custom_collections'
-            blogs: result[2],              // Data for 'blogs'
-            pages: result[3],              // Data for 'pages'
-        };
-
-        // Send the structured result back to the client
-        res.send(structuredResult);
-    } catch (error) {
-        console.error("Error fetching pages data:", error);
-        res.status(500).send("Failed to fetch data");
-    }
-});
-
-async function getData(shopifyStore, accessToken, urlEndpoint) {
-    try {
-        // Construct the correct Shopify API URL
-        const apiUrl = `https://${shopifyStore}/admin/api/2024-10/${urlEndpoint}.json`;
-
-        const pagesResponse = await axios.get(apiUrl, {
-            headers: {
-                "X-Shopify-Access-Token": accessToken,
-                "Content-Type": "application/json",
-            },
-        });
-
-        // Check if the response data is an array (in case of paginated responses)
-        if (!pagesResponse.data[urlEndpoint]) {
-            console.error(`No data found for ${urlEndpoint}`);
-            return [];
-        }
-
-        // Return the structured data
-        return pagesResponse.data[urlEndpoint].map((item) => {
-            if (urlEndpoint === "custom_collections") {
-                return {
-                    id: item.id,
-                    handle: item.handle,
-                    title: item.title,
-                    pageUrl: `https://${shopifyStore}/collections/${item.handle}`,
-                    count: pagesResponse.data[urlEndpoint].length,
-                };
-            } else {
-                return {
-                    id: item.id,
-                    handle: item.handle,
-                    title: item.title,
-                    pageUrl: `https://${shopifyStore}/${urlEndpoint}/${item.handle}`,
-                    count: pagesResponse.data[urlEndpoint].length,
-                };
-            }
-        });
-    } catch (error) {
-        console.error(`Error fetching data for ${urlEndpoint}:`, error.message);
-        return [];
-    }
-}
-
-app.get('/api/product', async (req, res) => {
-    // const { id } = req.params;
-    try {
-        const response = await axios.get(
-            // `https://${shopifyStore}/admin/api/2023-10/products/${id}.json`,
-            `https://demosaurav.myshopify.com/admin/api/2023-10/products/9674508894486.json`,
-            {
-                headers: {
-                    'X-Shopify-Access-Token': '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',
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        const product = response.data.product;
-        res.json({
-            metaTitle: product.title,
-            metaDescription: product.body_html.replace(/<[^>]+>/g, ''), // Remove HTML tags
-        });
-    } catch (error) {
-        console.error('Error fetching product data:', error);
-        res.status(500).json({ error: 'Failed to fetch product data' });
-    }
-});
-
-
-
-const gettoken = async (shopnm) => {
-    const shopname = shopnm;
-
-    try {
-        const store = await Shop.findOne({ shop: shopname });
-
-        if (!store) {
-            return { error: true, message: "Store not registered." };
-        }
-
-        return { accessToken: store.accessToken };
-    } catch (error) {
-        console.error("Error retrieving store data:", error);
-        return { error: true, message: "Internal Server Error" };
-    }
-};
-
-
 
 
 
 
 app.get('/shopify/product/:shopname', async (req, res) => {
-    const SHOP_NAME = req.params.shopname;
-    const { handle } = req.query;
+  const SHOP_NAME = req.params.shopname;
+  const { handle } = req.query;
 
-    try {
-        const token = await gettoken(SHOP_NAME);
-        const accessToken = token.accessToken;
-        // console.log(SHOP_NAME, ' : ', accessToken);
+  try {
+    const token = await gettoken(SHOP_NAME);
+    const accessToken = token.accessToken;
+    // console.log(SHOP_NAME, ' : ', accessToken);
 
-        const url = `https://${SHOP_NAME}/admin/api/2023-10/products.json?handle=${handle}`;
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'X-Shopify-Access-Token': accessToken,
-                'Content-Type': 'application/json',
-            },
-        });
+    const url = `https://${SHOP_NAME}/admin/api/2023-10/products.json?handle=${handle}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
+      },
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (response.ok) {
-            res.json(data);
-        } else {
-            res.status(response.status).json(data);
-        }
-    } catch (error) {
-        console.error('Error fetching product:', error);
-        res.status(500).send('Internal Server Error');
+    if (response.ok) {
+      res.json(data);
+    } else {
+      res.status(response.status).json(data);
     }
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 
@@ -939,44 +818,44 @@ app.get('/shopify/product/:shopname', async (req, res) => {
 
 // Endpoint to update product details
 app.put('/shopify/product/update/:shopname', async (req, res) => {
-    const SHOP_NAME = req.params.shopname;
-    const { productId, title, body_html } = req.body;
+  const SHOP_NAME = req.params.shopname;
+  const { productId, title, body_html } = req.body;
 
-    try {
-        const tokens = await gettoken(SHOP_NAME);
-        const accessToken = tokens.accessToken;
+  try {
+    const tokens = await gettoken(SHOP_NAME);
+    const accessToken = tokens.accessToken;
 
-        const url = `https://${SHOP_NAME}/admin/api/2023-10/products/${productId}.json`;
-        const response = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'X-Shopify-Access-Token': accessToken,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                product: {
-                    id: productId,
-                    title,
-                    body_html,
-                },
-            }),
-        });
+    const url = `https://${SHOP_NAME}/admin/api/2023-10/products/${productId}.json`;
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        product: {
+          id: productId,
+          title,
+          body_html,
+        },
+      }),
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (response.ok) {
-            res.json(data);
-        } else {
-            res.status(response.status).json(data);
-        }
-    } catch (error) {
-        console.error('Error updating product:', error);
-        res.status(500).send('Internal Server Error');
+    if (response.ok) {
+      res.json(data);
+    } else {
+      res.status(response.status).json(data);
     }
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
